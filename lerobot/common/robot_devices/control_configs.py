@@ -96,6 +96,8 @@ class RecordControlConfig(ControlConfig):
             self.policy.pretrained_path = policy_path
 
             # When no device or use_amp are given, use the one from training config.
+            self.device = 'cuda'
+            self.use_amp = True
             if self.device is None or self.use_amp is None:
                 train_cfg = TrainPipelineConfig.from_pretrained(policy_path)
                 if self.device is None:

@@ -17,7 +17,7 @@ from lerobot.configs.types import FeatureType, NormalizationMode, PolicyFeature
 # Generic variable that is either PreTrainedConfig or a subclass thereof
 T = TypeVar("T", bound="PreTrainedConfig")
 
-
+import json 
 @dataclass
 class PreTrainedConfig(draccus.ChoiceRegistry, HubMixin, abc.ABC):
     """
@@ -134,6 +134,16 @@ class PreTrainedConfig(draccus.ChoiceRegistry, HubMixin, abc.ABC):
                     token=token,
                     local_files_only=local_files_only,
                 )
+
+                with open(config_file, "r") as f:
+                    config_json = json.load(f)
+                try: 
+                    config_json.pop('device')
+                    config_json.pop('use_amp')
+                except KeyError:
+                    pass
+                with open(config_file, "w") as f:
+                    json.dump(config_json, f, indent=4)
             except HfHubHTTPError as e:
                 raise FileNotFoundError(
                     f"{CONFIG_NAME} not found on the HuggingFace Hub in {model_id}"
